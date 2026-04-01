@@ -1,0 +1,1 @@
+// Authentication routes with JWT integration
