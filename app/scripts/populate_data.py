@@ -1,0 +1,278 @@
+from sqlalchemy.orm import Session
+from app.db.database import SessionLocal, engine
+from app.models.tourism import State, Destination, Attraction, Base
+from app.schemas.tourism import StateCreate, DestinationCreate, AttractionCreate
+
+Base.metadata.create_all(bind=engine)
+
+INDIA_STATES_DATA = [
+    {
+        "name": "Andhra Pradesh",
+        "code": "AP",
+        "capital": "Amaravati",
+        "best_time_to_visit": "October to February",
+        "latitude": 15.9129,
+        "longitude": 79.7400,
+        "description": "Land of temples and historical monuments",
+    },
+    {
+        "name": "Arunachal Pradesh",
+        "code": "AR",
+        "capital": "Itanagar",
+        "best_time_to_visit": "September to April",
+        "latitude": 28.2180,
+        "longitude": 94.7278,
+        "description": "The land of the dawn-lit mountains",
+    },
+    {
+        "name": "Assam",
+        "code": "AS",
+        "capital": "Dispur",
+        "best_time_to_visit": "October to April",
+        "latitude": 26.2006,
+        "longitude": 92.9376,
+        "description": "Land of one-horned rhinos and tea gardens",
+    },
+    {
+        "name": "Bihar",
+        "code": "BR",
+        "capital": "Patna",
+        "best_time_to_visit": "October to March",
+        "latitude": 25.0961,
+        "longitude": 85.3131,
+        "description": "The land of Buddha",
+    },
+    {
+        "name": "Chhattisgarh",
+        "code": "CT",
+        "capital": "Raipur",
+        "best_time_to_visit": "October to May",
+        "latitude": 21.2787,
+        "longitude": 81.8661,
+        "description": "The rice bowl of India",
+    },
+    {
+        "name": "Goa",
+        "code": "GA",
+        "capital": "Panaji",
+        "best_time_to_visit": "November to February",
+        "latitude": 15.2993,
+        "longitude": 73.8243,
+        "description": "God's own country - Beaches and Portuguese heritage",
+    },
+    {
+        "name": "Gujarat",
+        "code": "GJ",
+        "capital": "Gandhinagar",
+        "best_time_to_visit": "October to February",
+        "latitude": 22.2587,
+        "longitude": 71.1924,
+        "description": "The land of Mahatma Gandhi",
+    },
+    {
+        "name": "Haryana",
+        "code": "HR",
+        "capital": "Chandigarh",
+        "best_time_to_visit": "September to March",
+        "latitude": 29.0588,
+        "longitude": 77.0745,
+        "description": "The land of heroes",
+    },
+    {
+        "name": "Himachal Pradesh",
+        "code": "HP",
+        "capital": "Shimla",
+        "best_time_to_visit": "March to October",
+        "latitude": 31.7433,
+        "longitude": 77.1205,
+        "description": "The land of Gods",
+    },
+    {
+        "name": "Jharkhand",
+        "code": "JH",
+        "capital": "Ranchi",
+        "best_time_to_visit": "October to March",
+        "latitude": 23.6102,
+        "longitude": 85.2799,
+        "description": "The land of waterfalls",
+    },
+    {
+        "name": "Karnataka",
+        "code": "KA",
+        "capital": "Bengaluru",
+        "best_time_to_visit": "October to February",
+        "latitude": 15.3173,
+        "longitude": 75.7139,
+        "description": "The land of coffee and silk",
+    },
+    {
+        "name": "Kerala",
+        "code": "KL",
+        "capital": "Thiruvananthapuram",
+        "best_time_to_visit": "August to March",
+        "latitude": 10.8505,
+        "longitude": 76.2711,
+        "description": "God's own country",
+    },
+    {
+        "name": "Madhya Pradesh",
+        "code": "MP",
+        "capital": "Bhopal",
+        "best_time_to_visit": "October to March",
+        "latitude": 22.9375,
+        "longitude": 78.6553,
+        "description": "The heart of India",
+    },
+    {
+        "name": "Maharashtra",
+        "code": "MH",
+        "capital": "Mumbai",
+        "best_time_to_visit": "October to February",
+        "latitude": 19.7515,
+        "longitude": 75.7139,
+        "description": "The land of Marathas",
+    },
+    {
+        "name": "Manipur",
+        "code": "MN",
+        "capital": "Imphal",
+        "best_time_to_visit": "October to March",
+        "latitude": 24.6637,
+        "longitude": 93.9063,
+        "description": "The jewel of India",
+    },
+    {
+        "name": "Meghalaya",
+        "code": "ML",
+        "capital": "Shillong",
+        "best_time_to_visit": "September to November",
+        "latitude": 25.4670,
+        "longitude": 91.3662,
+        "description": "The abode of clouds",
+    },
+    {
+        "name": "Mizoram",
+        "code": "MZ",
+        "capital": "Aizawl",
+        "best_time_to_visit": "September to April",
+        "latitude": 23.1815,
+        "longitude": 92.9789,
+        "description": "The land of blue hills",
+    },
+    {
+        "name": "Nagaland",
+        "code": "NL",
+        "capital": "Kohima",
+        "best_time_to_visit": "October to December",
+        "latitude": 26.1584,
+        "longitude": 94.5624,
+        "description": "The land of festivals",
+    },
+    {
+        "name": "Odisha",
+        "code": "OD",
+        "capital": "Bhubaneswar",
+        "best_time_to_visit": "October to February",
+        "latitude": 20.9517,
+        "longitude": 85.0985,
+        "description": "The land of Lord Jagannath",
+    },
+    {
+        "name": "Punjab",
+        "code": "PB",
+        "capital": "Chandigarh",
+        "best_time_to_visit": "October to March",
+        "latitude": 31.5497,
+        "longitude": 74.3436,
+        "description": "The land of five rivers",
+    },
+    {
+        "name": "Rajasthan",
+        "code": "RJ",
+        "capital": "Jaipur",
+        "best_time_to_visit": "October to March",
+        "latitude": 27.0238,
+        "longitude": 74.2179,
+        "description": "The land of kings",
+    },
+    {
+        "name": "Sikkim",
+        "code": "SK",
+        "capital": "Gangtok",
+        "best_time_to_visit": "March to May, September to November",
+        "latitude": 27.5330,
+        "longitude": 88.5122,
+        "description": "The land of Kanchenjunga",
+    },
+    {
+        "name": "Tamil Nadu",
+        "code": "TN",
+        "capital": "Chennai",
+        "best_time_to_visit": "November to February",
+        "latitude": 11.1271,
+        "longitude": 78.6569,
+        "description": "The land of Dravidian culture",
+    },
+    {
+        "name": "Telangana",
+        "code": "TG",
+        "capital": "Hyderabad",
+        "best_time_to_visit": "October to February",
+        "latitude": 15.3173,
+        "longitude": 78.6569,
+        "description": "The youngest state of India",
+    },
+    {
+        "name": "Tripura",
+        "code": "TR",
+        "capital": "Agartala",
+        "best_time_to_visit": "September to March",
+        "latitude": 23.4408,
+        "longitude": 91.9882,
+        "description": "The land of palaces",
+    },
+    {
+        "name": "Uttar Pradesh",
+        "code": "UP",
+        "capital": "Lucknow",
+        "best_time_to_visit": "October to March",
+        "latitude": 26.8467,
+        "longitude": 80.9462,
+        "description": "The land of Taj Mahal",
+    },
+    {
+        "name": "Uttarakhand",
+        "code": "UT",
+        "capital": "Dehradun",
+        "best_time_to_visit": "March to June, September to October",
+        "latitude": 30.0668,
+        "longitude": 79.0193,
+        "description": "The land of Gods",
+    },
+    {
+        "name": "West Bengal",
+        "code": "WB",
+        "capital": "Kolkata",
+        "best_time_to_visit": "October to March",
+        "latitude": 24.6355,
+        "longitude": 88.4149,
+        "description": "The cultural capital of India",
+    },
+]
+
+def populate_states(db: Session):
+    for state_data in INDIA_STATES_DATA:
+        existing_state = db.query(State).filter(State.name == state_data["name"]).first()
+        if not existing_state:
+            db_state = State(**state_data)
+            db.add(db_state)
+    db.commit()
+    print(f"✓ Populated {len(INDIA_STATES_DATA)} states")
+
+if __name__ == "__main__":
+    db = SessionLocal()
+    try:
+        populate_states(db)
+        print("✓ Database population completed successfully!")
+    finally:
+        db.close()
